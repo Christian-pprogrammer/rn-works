@@ -1,7 +1,8 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import generatePassword from '../utils/generatePassword';
+import axios from 'axios';
 
 const Register = ({navigation}) => {
 
@@ -11,9 +12,19 @@ const Register = ({navigation}) => {
 
   const register = async () => {
     try{
-      
+      if(!username || !password) {
+        Alert.alert('Please enter all fields');
+        return;
+      }
+      const newUser = {
+        username,
+        password
+      }
+      await axios.post("/api/users/register", newUser);
+      Alert.alert('User Registered successfully');
+      navigation.navigate("Login");
     }catch(err) {
-
+      Alert.alert('There was an error');
     }
   }
 
