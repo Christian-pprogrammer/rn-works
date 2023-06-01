@@ -8,6 +8,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import Select from './src/screens/Select';
 import ListEquipment from './src/screens/ListEquipment';
 import NewEquipment from './src/screens/NewEquipment';
+import EditEquipment from './src/screens/EditEquipment';
+import Logs from './src/screens/Logs';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
         <Stack.Screen name="Select" component={Select} />
         <Stack.Screen name="ListEquipment" component={ListEquipment} options={{headerShown: true, headerTitle: "List Equipment"}} />
         <Stack.Screen name="NewEquipment" component={NewEquipment} options={{headerShown: true, headerTitle: "New Equipment"}} />
+        <Stack.Screen name="EditEquipment" component={EditEquipment} options={{headerShown: true, headerTitle: "New Equipment"}} />
+        <Stack.Screen name="Logs" component={Logs} options={{headerShown: true, headerTitle: "All logs"}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

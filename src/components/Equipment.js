@@ -5,19 +5,24 @@ import CustomModal from './CustomModal'
 import axios from 'axios'
 import { BASE_URL } from '../constants/constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import getError from '../utils/getError'
 
-const Equipment = ({element, handleDelete}) => {
+const Equipment = ({element, handleDelete, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const deleteItem = async () => {
     setModalVisible(true);
   }
+  const editItem = async () => {
+    navigation.navigate("EditEquipment", {
+      item: element
+    })
+  }
   const handleSubmitInput = async (input) => {
-    setModalVisible(false);
-    const token = await AsyncStorage.getItem("token");
     try{
+      const token = await AsyncStorage.getItem("token");
       await axios.post(`${BASE_URL}/api/equipment/delete/${element._id}`, {
-        password: password
+        password: input
       }, {
         headers: {
           Authorization: token
@@ -26,7 +31,7 @@ const Equipment = ({element, handleDelete}) => {
       Alert.alert("deleted successfully");      
       handleDelete(element._id);
     }catch(err) {
-      Alert.alert("incorrect password");
+      Alert.alert(getError(err));
     }
   }
   return (
@@ -47,6 +52,9 @@ const Equipment = ({element, handleDelete}) => {
       </View>
       <View>
         <AntDesign name="delete" size={24} color="white" onPress={deleteItem} />
+      </View>
+      <View>
+        <AntDesign name="edit" size={24} color="white" onPress={editItem} />
       </View>
       {
         modalVisible && <CustomModal
@@ -71,16 +79,18 @@ const styles = StyleSheet.create({
     margin: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   dataItem: {
     display: 'flex',
     flexDirection: 'row',
     gap: 5,
-    paddingVertical: 5
+    paddingVertical: 5,
+    width: '90%',
+    flexWrap: 'wrap'
   },
   text: {
     color: '#fff',
-    fontSize: 17
+    fontSize: 17,
   }
 })

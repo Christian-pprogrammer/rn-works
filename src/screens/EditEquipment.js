@@ -8,13 +8,17 @@ import { BASE_URL } from '../constants/constants';
 import getError from '../utils/getError';
 
 
-const NewEquipment = ({navigation}) => {
+const EditEquipment = ({navigation, route}) => {
 
-  const [code, setCode] = useState('');
-  const [description, setDescription] = useState('');
-  const [value, setValue] = useState('');
-  const [date, setDate] = useState('');
-  const [actualDate, setActualDate] = useState(new Date());
+  const { item } = route.params;
+  console.log(item)
+
+  const [code, setCode] = useState(item.code);
+  const [description, setDescription] = useState(item.description);
+  const [value, setValue] = useState(item.value);
+  const [date, setDate] = useState((new Date(item.dateOfAcquisition)).toDateString());
+  const [actualDate, setActualDate] = useState(new Date(item.dateOfAcquisition));
+  const [password, setPassword] = useState('');
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
@@ -31,19 +35,23 @@ const NewEquipment = ({navigation}) => {
     });
   };
 
-  const registerEquipment = async () => {
+  const editEquipment = async () => {
     try{
       if(!code || !description || !value || !date) {
         Alert.alert("Please fill all info");
         return;
       }
+      if(!password) {
+        Alert.alert("Password is required");
+        return;
+      }
       const token = await AsyncStorage.getItem("token");
-      console.log(actualDate)
-      await axios.post(`${BASE_URL}/api/equipment/new`, {
+      await axios.patch(`${BASE_URL}/api/equipment/update/${item._id}`, {
         code,
         description,
         value,
-        dateOfAcquisition: actualDate
+        dateOfAcquisition: actualDate,
+        password
       }, {
         headers: {
           Authorization: token
@@ -53,8 +61,10 @@ const NewEquipment = ({navigation}) => {
       setDescription('');
       setValue('');
       setDate('');
-      setActualDate(new Date())
-      Alert.alert("Equipment registered");
+      setActualDate(new Date());
+      setPassword('');
+      Alert.alert("Equipment updated");
+      navigation.navigate("ListEquipment", {item: item});
     }catch(err) {
       Alert.alert(getError(err));
     }
@@ -66,8 +76,10 @@ const NewEquipment = ({navigation}) => {
       alignItems: 'center'
     }}>
       <ScrollView style={styles.form}>
-        <Text style={styles.heading}>New Equipment</Text>
-        <View>
+        <Text style={styles.heading}>Edit Equipment</Text>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Code</Text>
           <TextInput 
             style={styles.input}
             placeholder='Code'
@@ -75,7 +87,8 @@ const NewEquipment = ({navigation}) => {
             onChangeText={(value)=>setCode(value)}
           />
         </View>
-        <View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Description</Text>
           <TextInput 
             style={[styles.input, {
               height: 100
@@ -86,7 +99,8 @@ const NewEquipment = ({navigation}) => {
             multiline={true}
           />
         </View>
-        <View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Value</Text>
           <TextInput 
             style={styles.input}
             placeholder='Value'
@@ -95,7 +109,8 @@ const NewEquipment = ({navigation}) => {
           />
         </View>
 
-        <View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Acquisition Date</Text>
           <TextInput 
             style={styles.input}
             placeholder='Date of Acquisition'
@@ -103,13 +118,23 @@ const NewEquipment = ({navigation}) => {
             onPressIn={()=>showMode()}
           />
         </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput 
+            style={styles.input}
+            placeholder='Enter your login password'
+            value={password}
+            onChangeText={(value)=>setPassword(value)}
+          />
+        </View>
       
         <View>
           <TouchableOpacity 
             style={styles.submitBtn}
-            onPress={registerEquipment}
+            onPress={editEquipment}
           >
-            <Text style={styles.text}>Register equipment</Text>
+            <Text style={styles.text}>Edit equipment</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -117,7 +142,7 @@ const NewEquipment = ({navigation}) => {
   )
 }
 
-export default NewEquipment
+export default EditEquipment
 
 const styles = StyleSheet.create({
   container: {
@@ -162,5 +187,14 @@ const styles = StyleSheet.create({
     gap: 4,
     justifyContent: 'flex-end',
     paddingRight: 10
+  },
+  inputContainer: {
+    justifyContent: 'center',
+    marginTop: 5
+  },
+  label: {
+    marginBottom: 0,
+    fontSize: 16,
+    marginBottom: -5
   }
 })

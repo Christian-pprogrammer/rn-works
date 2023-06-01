@@ -4,44 +4,41 @@ import axios from 'axios'
 import { BASE_URL } from '../constants/constants'
 import Equipment from '../components/Equipment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Log from '../components/Log'
 import getError from '../utils/getError'
 
-const ListEquipment = ({navigation, route}) => {
-  const [equipment, setEquipment] = useState([]);
+const Logs = ({navigation, route}) => {
+  const [logs, setLogs] = useState([]);
   useEffect(()=>{
-    const fetchEquipment = async () => {
+    const fetchLogs = async () => {
       const token = await AsyncStorage.getItem("token");
       try{
-        const res = await axios.get(`${BASE_URL}/api/equipment/list`, {
+        const res = await axios.get(`${BASE_URL}/api/logs`, {
           headers: {
             Authorization: token
           }
         });
-        setEquipment(res.data);
+        setLogs(res.data.logs);
       }catch(err) {
-        Alert.alert(getError(err))
+        Alert.alert(getError(err));
       }
     }
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchEquipment();
+      fetchLogs();
     });
   }, [])
-  const handleDelete = (id) => {
-    const newEquipment = equipment.filter((equipment)=>equipment._id != id);
-    setEquipment(newEquipment);
-  }
 
   return (
     <View>
       <FlatList 
-        data={equipment}
-        renderItem={({item})=><Equipment element={item} handleDelete={handleDelete} navigation={navigation} />}
+        data={logs}
+        renderItem={({item})=><Log logItem={item} />}
         keyExtractor={item => item._id}
       />
     </View>
   )
 }
 
-export default ListEquipment
+export default Logs
 
 const styles = StyleSheet.create({})

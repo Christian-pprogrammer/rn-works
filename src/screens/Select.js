@@ -22,6 +22,15 @@ const Select = ({navigation}) => {
         </Text>
 
       </TouchableOpacity>
+      <TouchableOpacity
+          style={[styles.submitBtn, {padding: 10}]}
+          onPress={()=>navigation.navigate("Logs")}
+        >
+        <Text style={styles.text}>
+          View system logs
+        </Text>
+
+      </TouchableOpacity>
     </View>
   )
 }

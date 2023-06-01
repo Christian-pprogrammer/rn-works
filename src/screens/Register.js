@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import generatePassword from '../utils/generatePassword';
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
+import getError from '../utils/getError';
 
 const Register = ({navigation}) => {
 
@@ -28,8 +29,7 @@ const Register = ({navigation}) => {
       Alert.alert('User Registered successfully');
       navigation.navigate("Select");
     }catch(err) {
-      console.log(err)
-      Alert.alert('There was an error');
+      Alert.alert(getError(err));
     }
   }
 
@@ -39,7 +39,7 @@ const Register = ({navigation}) => {
       const newPass = await generatePassword();
       setPassword(newPass)
     }catch(err) {
-      console.log(err.message);
+      Alert.alert(getError(err));
     }
   }
 

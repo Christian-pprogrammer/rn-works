@@ -1,17 +1,31 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios, { AxiosError } from 'axios';
+import { BASE_URL } from '../constants/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import getError from '../utils/getError';
 
 const Register = ({navigation}) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const register = async () => {
+  const login = async () => {
     try{
-      
+      if(!username || !password) {
+        Alert.alert("Please Enter all fields");
+        return;
+      }
+      const res = await axios.post(`${BASE_URL}/api/users/login`, {
+        username,
+        password
+      });
+      await AsyncStorage.setItem("token", res.data.token);
+      Alert.alert('Logged in successfully');
+      navigation.navigate("Select");
     }catch(err) {
-
+      Alert.alert(getError(err));
     }
   }
 
@@ -39,7 +53,7 @@ const Register = ({navigation}) => {
         <View>
           <TouchableOpacity 
             style={styles.submitBtn}
-            onPress={register}
+            onPress={login}
           >
             <Text style={styles.text}>Login</Text>
           </TouchableOpacity>
