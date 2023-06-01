@@ -1,8 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import generatePassword from '../utils/generatePassword';
 import axios from 'axios';
+import { BASE_URL } from '../constants/constants';
 
 const Register = ({navigation}) => {
 
@@ -20,10 +22,13 @@ const Register = ({navigation}) => {
         username,
         password
       }
-      await axios.post("/api/users/register", newUser);
+      const res = await axios.post(`${BASE_URL}/api/users/register`, newUser);
+      console.log(res.data.token);
+      await AsyncStorage.setItem("token", res.data.token);
       Alert.alert('User Registered successfully');
-      navigation.navigate("Login");
+      navigation.navigate("Select");
     }catch(err) {
+      console.log(err)
       Alert.alert('There was an error');
     }
   }
@@ -54,9 +59,8 @@ const Register = ({navigation}) => {
           <TextInput 
             placeholder='Password'
             value={password}
-            onChangeText={(value)=>setPassword(value)}
             style={[styles.input, {flex: 1}]}
-            editable={false}
+            
           />
           <TouchableOpacity
             style={[styles.submitBtn, {padding: 10}]}

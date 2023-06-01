@@ -5,6 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/screens/Login';
 import Register from './src/screens/Register';
 import { NavigationContainer } from '@react-navigation/native';
+import Select from './src/screens/Select';
+import ListEquipment from './src/screens/ListEquipment';
+import NewEquipment from './src/screens/NewEquipment';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -15,6 +18,9 @@ export default function App() {
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="Select" component={Select} />
+        <Stack.Screen name="ListEquipment" component={ListEquipment} options={{headerShown: true, headerTitle: "List Equipment"}} />
+        <Stack.Screen name="NewEquipment" component={NewEquipment} options={{headerShown: true, headerTitle: "New Equipment"}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
